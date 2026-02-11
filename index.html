@@ -11,7 +11,6 @@
       --pink2:#ff8fb8;
       --white:#ffffff;
       --ink:#2b1b22;
-      --glass: rgba(255,255,255,.14);
     }
 
     body{
@@ -29,7 +28,6 @@
       transition: background 700ms ease, color 700ms ease;
     }
 
-    /* بعد الضغط Yes: ثيم وردي/أبيض */
     body.loveMode{
       color: var(--ink);
       background:
@@ -102,7 +100,6 @@
       background: linear-gradient(135deg, var(--pink), #b5179e);
     }
 
-    /* شاشة بعد Yes */
     .stage{
       display:none;
       margin-top:18px;
@@ -139,7 +136,6 @@
       100%{ transform: translateY(0); opacity:1; }
     }
 
-    /* قلوب تنزل */
     .fallHeart{
       position: fixed;
       top: -40px;
@@ -172,7 +168,6 @@
       100% { transform: translateY(110vh) rotate(45deg); opacity:0; }
     }
 
-    /* تقليل الحركة للناس اللي ما يبغون أنيميشن */
     @media (prefers-reduced-motion: reduce){
       .fallHeart{ animation: none; opacity: 0; }
       .bigTitle, .songLine{ animation: none; }
@@ -189,19 +184,64 @@
     <p class="sub" id="sub">Yes, play our song</p>
 
     <div class="btns" id="btns">
-      <button class="no" id="noBtn">No</button>
-      <button class="yes" id="yesBtn">Yes</button>
+      <button class="no" id="noBtn" type="button">No</button>
+      <button class="yes" id="yesBtn" type="button">Yes</button>
     </div>
 
-    <section class="stage" id="stage">
+    <section class="stage" id="stage" aria-live="polite">
       <div class="bigTitle">be my baby</div>
-      <p class="songLine">The song is playing…</p>
+      <p class="songLine" id="songLine">The song is playing…</p>
 
       <audio id="aud" preload="metadata">
         <source src="audio.m4a" type="audio/mp4" />
+        Your browser does not support the audio element.
       </audio>
     </section>
   </main>
 
   <script>
-    const ye
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn  = document.getElementById('noBtn');
+    const stage  = document.getElementById('stage');
+    const btns   = document.getElementById('btns');
+    const aud    = document.getElementById('aud');
+    const songLine = document.getElementById('songLine');
+
+    function spawnHearts(){
+      const make = () => {
+        const h = document.createElement('div');
+        h.className = 'fallHeart';
+        h.style.setProperty('--x', Math.random()*100 + 'vw');
+        const s = 14 + Math.random()*26;
+        h.style.setProperty('--s', s + 'px');
+        h.style.setProperty('--d', (3 + Math.random()*3.5) + 's');
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 7000);
+      };
+      for(let i=0;i<10;i++) setTimeout(make, i*120);
+      setInterval(make, 220);
+    }
+
+    yesBtn.addEventListener('click', async () => {
+      document.body.classList.add('loveMode');
+      stage.classList.add('show');
+      btns.style.display = 'none';
+      spawnHearts();
+
+      try{
+        await aud.play(); // play() يرجع Promise وقد يفشل لو ما فيه تفاعل
+        songLine.textContent = 'The song is playing…';
+      }catch(e){
+        songLine.textContent = 'Tap again to play the song.';
+      }
+    });
+
+    noBtn.addEventListener('click', () => {
+      noBtn.style.opacity = '0.35';
+      noBtn.textContent = 'Try again';
+      noBtn.style.transform =
+        `translateX(${(Math.random()*90-45)}px) translateY(${(Math.random()*50-25)}px)`;
+    });
+  </script>
+</body>
+</html>

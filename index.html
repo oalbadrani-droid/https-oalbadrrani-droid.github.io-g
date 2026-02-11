@@ -28,6 +28,7 @@
       transition: background 700ms ease, color 700ms ease;
     }
 
+    /* بعد الضغط Yes: ثيم وردي/أبيض */
     body.loveMode{
       color: var(--ink);
       background:
@@ -37,21 +38,21 @@
     }
 
     .card{
-      width:min(620px, 92vw);
-      padding:30px 22px;
+      width:min(720px, 92vw);
+      padding:34px 22px;
       border:1px solid rgba(255,255,255,.10);
-      border-radius:20px;
+      border-radius:22px;
       background: rgba(255,255,255,.06);
       backdrop-filter: blur(10px);
       box-shadow: 0 18px 60px rgba(0,0,0,.45);
       text-align:center;
       position: relative;
       z-index: 5;
-      transition: background 700ms ease, border-color 700ms ease, box-shadow 700ms ease;
+      transition: background 700ms ease, border-color 700ms ease, box-shadow 700ms ease, transform 700ms ease;
     }
 
     body.loveMode .card{
-      background: rgba(255,255,255,.70);
+      background: rgba(255,255,255,.72);
       border-color: rgba(255,77,141,.22);
       box-shadow: 0 18px 55px rgba(255,77,141,.22);
     }
@@ -59,7 +60,7 @@
     h1{
       margin:0 0 10px;
       font-size:22px;
-      font-weight:800;
+      font-weight:900;
       letter-spacing:.2px;
       line-height:1.35;
     }
@@ -83,7 +84,7 @@
       cursor:pointer;
       padding:12px 18px;
       border-radius:14px;
-      font-weight:800;
+      font-weight:900;
       font-size:15px;
       box-shadow: 0 10px 22px rgba(0,0,0,.25);
       transition: transform .12s ease, filter .12s ease, opacity .2s ease;
@@ -100,16 +101,41 @@
       background: linear-gradient(135deg, var(--pink), #b5179e);
     }
 
+    /* "الانتقال" */
+    .fadeOut{
+      animation: fadeOut 500ms ease forwards;
+    }
+    @keyframes fadeOut{
+      to { opacity:0; transform: translateY(-6px); }
+    }
+
+    /* حرف G */
+    .gLetter{
+      display:none;
+      font-size: 92px;
+      font-weight: 1000;
+      line-height: 1;
+      letter-spacing: 4px;
+      margin: 4px 0 6px;
+      color: transparent;
+      background: linear-gradient(135deg, var(--pink), var(--pink2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      text-shadow: 0 18px 38px rgba(255,77,141,.20);
+      animation: popIn 900ms cubic-bezier(.2,.9,.2,1) 1;
+    }
+
+    /* شاشة بعد Yes */
     .stage{
       display:none;
-      margin-top:18px;
+      margin-top:10px;
     }
     .stage.show{ display:block; }
 
     .bigTitle{
-      margin: 8px 0 4px;
-      font-weight: 900;
-      font-size: 44px;
+      margin: 0 0 6px;
+      font-weight: 1000;
+      font-size: 50px;
       letter-spacing: .5px;
       color: transparent;
       background: linear-gradient(135deg, var(--pink), var(--pink2));
@@ -127,7 +153,7 @@
     }
 
     @keyframes popIn{
-      0%{ transform: translateY(10px) scale(.9); opacity:0; }
+      0%{ transform: translateY(10px) scale(.92); opacity:0; }
       65%{ transform: translateY(-2px) scale(1.05); opacity:1; }
       100%{ transform: translateY(0) scale(1); opacity:1; }
     }
@@ -136,6 +162,7 @@
       100%{ transform: translateY(0); opacity:1; }
     }
 
+    /* قلوب تنزل */
     .fallHeart{
       position: fixed;
       top: -40px;
@@ -170,7 +197,7 @@
 
     @media (prefers-reduced-motion: reduce){
       .fallHeart{ animation: none; opacity: 0; }
-      .bigTitle, .songLine{ animation: none; }
+      .bigTitle, .songLine, .gLetter{ animation: none; }
     }
   </style>
 </head>
@@ -178,9 +205,13 @@
 <body>
   <main class="card" id="card">
     <h1 id="q">
-      Baby, when you’re with me, everything feels right.<br />
-      So I have just one question for you… will you be my baby
+      <span class="gLetter" id="gLetter">G</span>
+      <span id="qText">
+        Baby, when you’re with me, everything feels right.<br />
+        So I have just one question for you… will you be my baby
+      </span>
     </h1>
+
     <p class="sub" id="sub">Yes, play our song</p>
 
     <div class="btns" id="btns">
@@ -189,7 +220,8 @@
     </div>
 
     <section class="stage" id="stage" aria-live="polite">
-      <div class="bigTitle">be my baby</div>
+      <!-- غيّر الكلمة هنا -->
+      <div class="bigTitle" id="bigTitle">be my baby</div>
       <p class="songLine" id="songLine">The song is playing…</p>
 
       <audio id="aud" preload="metadata">
@@ -200,11 +232,19 @@
   </main>
 
   <script>
+    // غيّر النص هنا إذا تبي بدل "be my baby" (بيتم تطبيقه بعد الضغط Yes)
+    const SECOND_WORD = 'be my baby';
+
     const yesBtn = document.getElementById('yesBtn');
     const noBtn  = document.getElementById('noBtn');
     const stage  = document.getElementById('stage');
     const btns   = document.getElementById('btns');
     const aud    = document.getElementById('aud');
+
+    const qText = document.getElementById('qText');
+    const gLetter = document.getElementById('gLetter');
+    const sub = document.getElementById('sub');
+    const bigTitle = document.getElementById('bigTitle');
     const songLine = document.getElementById('songLine');
 
     function spawnHearts(){
@@ -223,13 +263,27 @@
     }
 
     yesBtn.addEventListener('click', async () => {
+      // انتقال ناعم: اخفاء النص الأسود
+      qText.classList.add('fadeOut');
+      sub.classList.add('fadeOut');
+
+      // بعد نصف ثانية نظهر G ونكمل
+      setTimeout(() => {
+        qText.style.display = 'none';
+        sub.style.display = 'none';
+        gLetter.style.display = 'inline-block';
+      }, 520);
+
+      // الكلمة الثانية
+      bigTitle.textContent = SECOND_WORD;
+
       document.body.classList.add('loveMode');
       stage.classList.add('show');
       btns.style.display = 'none';
       spawnHearts();
 
       try{
-        await aud.play(); // play() يرجع Promise وقد يفشل لو ما فيه تفاعل
+        await aud.play();
         songLine.textContent = 'The song is playing…';
       }catch(e){
         songLine.textContent = 'Tap again to play the song.';

@@ -1,138 +1,201 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>💌</title>
+  <title>💗</title>
 
   <style>
     :root{
-      --bg1:#0b0b12;
-      --bg2:#1b0f1a;
-      --rose:#ff4d6d;
-      --rose2:#ff8fab;
-      --text:rgba(255,255,255,.92);
+      --pink:#ff4d8d;
+      --pink2:#ff8fb8;
+      --white:#ffffff;
+      --ink:#2b1b22;
+      --glass: rgba(255,255,255,.14);
     }
 
     body{
-      margin:0; min-height:100vh; display:grid; place-items:center;
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
       font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial;
-      color:var(--text);
       overflow:hidden;
+      color: rgba(255,255,255,.92);
       background:
-        radial-gradient(1200px 600px at 70% 10%, #2a1230 0%, transparent 60%),
-        radial-gradient(900px 500px at 10% 80%, #1a2a44 0%, transparent 55%),
-        linear-gradient(135deg, var(--bg1), var(--bg2));
+        radial-gradient(1200px 650px at 70% 10%, #3a1638 0%, transparent 60%),
+        radial-gradient(900px 520px at 10% 85%, #1b2b55 0%, transparent 55%),
+        linear-gradient(135deg, #0b0b12, #1b0f1a);
+      transition: background 700ms ease, color 700ms ease;
+    }
+
+    /* بعد الضغط Yes: ثيم وردي/أبيض */
+    body.loveMode{
+      color: var(--ink);
+      background:
+        radial-gradient(900px 500px at 70% 10%, rgba(255,77,141,.45) 0%, transparent 60%),
+        radial-gradient(900px 520px at 20% 90%, rgba(255,143,184,.35) 0%, transparent 55%),
+        linear-gradient(135deg, #fff, #ffe6f0);
     }
 
     .card{
-      width:min(560px, 92vw);
-      padding:28px 22px;
+      width:min(620px, 92vw);
+      padding:30px 22px;
       border:1px solid rgba(255,255,255,.10);
-      border-radius:18px;
+      border-radius:20px;
       background: rgba(255,255,255,.06);
       backdrop-filter: blur(10px);
       box-shadow: 0 18px 60px rgba(0,0,0,.45);
       text-align:center;
       position: relative;
-      z-index: 2;
+      z-index: 5;
+      transition: background 700ms ease, border-color 700ms ease, box-shadow 700ms ease;
     }
 
-    h1{ margin:0 0 12px; font-size:20px; font-weight:700; letter-spacing:.2px;}
-    p{ margin:0 0 18px; opacity:.9; line-height:1.6; font-size:15px;}
+    body.loveMode .card{
+      background: rgba(255,255,255,.70);
+      border-color: rgba(255,77,141,.22);
+      box-shadow: 0 18px 55px rgba(255,77,141,.22);
+    }
 
-    .btns{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+    h1{
+      margin:0 0 10px;
+      font-size:22px;
+      font-weight:800;
+      letter-spacing:.2px;
+      line-height:1.35;
+    }
+
+    .sub{
+      margin:0 0 18px;
+      opacity:.9;
+      font-size:14px;
+    }
+
+    .btns{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
     button{
-      border:0; cursor:pointer;
+      border:0;
+      cursor:pointer;
       padding:12px 18px;
-      border-radius:12px;
-      font-weight:700;
-      color:#111;
-      background: linear-gradient(135deg, #fff, #f6f0ff);
+      border-radius:14px;
+      font-weight:800;
+      font-size:15px;
       box-shadow: 0 10px 22px rgba(0,0,0,.25);
-      transition: transform .12s ease, filter .12s ease;
+      transition: transform .12s ease, filter .12s ease, opacity .2s ease;
     }
     button:hover{ transform: translateY(-1px); filter:brightness(1.02); }
-    .yes{ color:#fff; background: linear-gradient(135deg, var(--rose), #b5179e); }
-    .no{ background: rgba(255,255,255,.85); }
 
-    .stage{ margin-top:18px; display:none; }
+    .no{
+      background: rgba(255,255,255,.88);
+      color:#111;
+    }
 
-    /* حرف G الرومانسي */
-    .gMark{
+    .yes{
+      color:#fff;
+      background: linear-gradient(135deg, var(--pink), #b5179e);
+    }
+
+    /* شاشة بعد Yes */
+    .stage{
+      display:none;
+      margin-top:18px;
+    }
+    .stage.show{ display:block; }
+
+    .bigTitle{
+      margin: 8px 0 4px;
       font-weight: 900;
-      font-size: 82px;
-      letter-spacing: 1px;
-      background: linear-gradient(135deg, #fff, var(--rose2), var(--rose));
+      font-size: 44px;
+      letter-spacing: .5px;
+      color: transparent;
+      background: linear-gradient(135deg, var(--pink), var(--pink2));
       -webkit-background-clip: text;
       background-clip: text;
-      color: transparent;
-      filter: drop-shadow(0 18px 35px rgba(255,77,109,.25));
-      opacity: 0;
-      transform: translateY(10px) scale(.85);
-    }
-    .stage.show .gMark{
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      animation: gReveal 1200ms cubic-bezier(.2,.9,.2,1) 1;
-    }
-    @keyframes gReveal{
-      0%{ opacity:0; transform: translateY(16px) scale(.78); filter: blur(2px); }
-      60%{ opacity:1; transform: translateY(-4px) scale(1.08); filter: blur(0); }
-      100%{ opacity:1; transform: translateY(0) scale(1); }
+      text-shadow: 0 16px 30px rgba(255,77,141,.15);
+      animation: popIn 900ms cubic-bezier(.2,.9,.2,1) 1;
     }
 
-    /* قلوب طايرة (Particles) */
-    .heartP{
-      position: fixed;
-      left: 0; top: 0;
-      width: 16px; height: 16px;
-      transform: translate(-50%, -50%) rotate(45deg);
-      background: linear-gradient(135deg, var(--rose), var(--rose2));
-      border-radius: 4px;
-      pointer-events:none;
-      z-index: 1;
+    .songLine{
+      margin: 0;
+      font-size: 14px;
       opacity: .9;
-      animation: floatUp 1300ms ease-out forwards;
-      filter: drop-shadow(0 14px 24px rgba(255,77,109,.20));
+      animation: fadeUp 900ms ease 1;
     }
-    .heartP::before, .heartP::after{
+
+    @keyframes popIn{
+      0%{ transform: translateY(10px) scale(.9); opacity:0; }
+      65%{ transform: translateY(-2px) scale(1.05); opacity:1; }
+      100%{ transform: translateY(0) scale(1); opacity:1; }
+    }
+    @keyframes fadeUp{
+      0%{ transform: translateY(8px); opacity:0; }
+      100%{ transform: translateY(0); opacity:1; }
+    }
+
+    /* قلوب تنزل */
+    .fallHeart{
+      position: fixed;
+      top: -40px;
+      left: var(--x);
+      width: var(--s);
+      height: var(--s);
+      transform: rotate(45deg);
+      background: linear-gradient(135deg, var(--pink), var(--pink2));
+      border-radius: 5px;
+      opacity: .9;
+      pointer-events:none;
+      z-index: 2;
+      animation: fall var(--d) linear forwards;
+      filter: drop-shadow(0 12px 18px rgba(255,77,141,.18));
+    }
+    .fallHeart::before, .fallHeart::after{
       content:"";
       position:absolute;
-      width:16px; height:16px;
+      width:100%;
+      height:100%;
       background: inherit;
       border-radius: 50%;
     }
-    .heartP::before{ top:-8px; left:0; }
-    .heartP::after{ left:-8px; top:0; }
+    .fallHeart::before{ top:-50%; left:0; }
+    .fallHeart::after{ left:-50%; top:0; }
 
-    @keyframes floatUp{
-      0%   { transform: translate(-50%, -50%) rotate(45deg) scale(.9); opacity:.95; }
-      100% { transform: translate(calc(-50% + var(--dx)), calc(-50% - var(--dy))) rotate(45deg) scale(1.4); opacity:0; }
+    @keyframes fall{
+      0%   { transform: translateY(-30px) rotate(45deg); opacity:.0; }
+      10%  { opacity:.95; }
+      100% { transform: translateY(110vh) rotate(45deg); opacity:0; }
     }
 
-    /* احترام تقليل الحركة */
+    /* تقليل الحركة للناس اللي ما يبغون أنيميشن */
     @media (prefers-reduced-motion: reduce){
-      .heartP{ animation: none; opacity: 0; }
-      .stage.show .gMark{ animation: none; }
+      .fallHeart{ animation: none; opacity: 0; }
+      .bigTitle, .songLine{ animation: none; }
     }
   </style>
 </head>
 
 <body>
-  <main class="card">
-    <h1>Baby, when you’re with me, everything feels right.
-So I have just one question for you…
-will you be my baby</h1>
-    <p>Yes, play our song؟</p>
+  <main class="card" id="card">
+    <h1 id="q">
+      Baby, when you’re with me, everything feels right.<br />
+      So I have just one question for you… will you be my baby
+    </h1>
+    <p class="sub" id="sub">Yes, play our song</p>
 
-    <div class="btns">
-      <button class="yes" id="yesBtn">Yes</button>
+    <div class="btns" id="btns">
       <button class="no" id="noBtn">No</button>
+      <button class="yes" id="yesBtn">Yes</button>
     </div>
 
     <section class="stage" id="stage">
-      <div class="gMark" aria-label="G">G</div>
+      <div class="bigTitle">be my baby</div>
+      <p class="songLine">The song is playing…</p>
 
       <audio id="aud" preload="metadata">
         <source src="audio.m4a" type="audio/mp4" />
@@ -141,53 +204,4 @@ will you be my baby</h1>
   </main>
 
   <script>
-    const yesBtn = document.getElementById('yesBtn');
-    const noBtn  = document.getElementById('noBtn');
-    const stage  = document.getElementById('stage');
-    const aud    = document.getElementById('aud');
-
-    function burstHearts(count = 18){
-      const cx = window.innerWidth / 2;
-      const cy = window.innerHeight * 0.55;
-
-      for(let i=0;i<count;i++){
-        const h = document.createElement('div');
-        h.className = 'heartP';
-
-        const dx = (Math.random()*2 - 1) * 220;      // يمين/يسار
-        const dy = 260 + Math.random() * 420;        // لفوق
-        h.style.setProperty('--dx', dx.toFixed(0) + 'px');
-        h.style.setProperty('--dy', dy.toFixed(0) + 'px');
-
-        h.style.left = (cx + (Math.random()*2 - 1) * 30) + 'px';
-        h.style.top  = (cy + (Math.random()*2 - 1) * 18) + 'px';
-
-        const s = 12 + Math.random()*14;
-        h.style.width = s + 'px';
-        h.style.height = s + 'px';
-
-        document.body.appendChild(h);
-        h.addEventListener('animationend', () => h.remove());
-        setTimeout(() => h.remove(), 1600);
-      }
-    }
-
-    yesBtn.addEventListener('click', async () => {
-      stage.style.display = 'block';
-      stage.classList.add('show');
-
-      burstHearts(22);
-
-      // تشغيل الصوت بعد ضغط المستخدم
-      try { await aud.play(); } catch (e) {}
-
-      yesBtn.disabled = true;
-      noBtn.disabled = true;
-    });
-
-    noBtn.addEventListener('click', () => {
-      alert('حطي yes واحلالي');
-    });
-  </script>
-</body>
-</html>
+    const ye
